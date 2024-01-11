@@ -17,10 +17,23 @@ const UserSchema = new Schema(
       trim: true,
       minlength: 6,
     },
-    role: {
-      type: String,
-      enum: [ 'admin', 'zonal'],
-      default: 'zonal'
+    roles: {
+      type: [{
+        type: String,
+        enum: [
+          "admin",
+          "user",
+          "Eastern Vidarbha",
+          "Konkan",
+          "Marathwada",
+          "Mumbai",
+          "Northern Maharashtra",
+          "Thane + Palghar",
+          "Western Maharashtra",
+          "Western Vidarbha",
+        ],
+      }],
+      default: ["user"],
     },
   },
   { timestamps: true }
