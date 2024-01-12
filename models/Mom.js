@@ -53,6 +53,11 @@ const MomSchema = new Schema(
       required: [true, "Please select a Party Name"],
       trim: true,
     },
+    tags: {
+      type: [String],
+      required: [true, "Please enter tags"],
+      trim: true,
+    },
     photo: {
       type: String,
     },
