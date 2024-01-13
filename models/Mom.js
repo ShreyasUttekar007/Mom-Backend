@@ -55,7 +55,6 @@ const MomSchema = new Schema(
     },
     tags: {
       type: [String],
-      required: [true, "Please enter tags"],
       trim: true,
     },
     photo: {
