@@ -22,6 +22,7 @@ const UserSchema = new Schema(
         type: String,
         enum: [
           "admin",
+          "mod",
           "user",
           "Eastern Vidarbha",
           "Konkan",

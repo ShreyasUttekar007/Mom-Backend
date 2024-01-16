@@ -66,6 +66,28 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+router.get("/users", async (req, res, next) => {
+  try {
+    const users = await User.find({}, { password: 0 });
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/users/:id", async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId, { password: 0 });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.put("/update-password", async (req, res, next) => {
   try {
@@ -79,7 +101,9 @@ router.put("/update-password", async (req, res, next) => {
       if (err) throw err;
 
       if (!isMatch) {
-        return res.status(401).json({ message: "Current password is incorrect" });
+        return res
+          .status(401)
+          .json({ message: "Current password is incorrect" });
       }
       user.password = newPassword;
 
@@ -88,8 +112,23 @@ router.put("/update-password", async (req, res, next) => {
         expiresIn: "1d",
       });
 
-      res.status(200).json({ message: "Password updated successfully", newToken });
+      res
+        .status(200)
+        .json({ message: "Password updated successfully", newToken });
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/users/:id", async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     next(error);
   }
