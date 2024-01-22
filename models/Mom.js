@@ -67,6 +67,15 @@ const MomSchema = new Schema(
   { timestamps: true }
 );
 
+MomSchema.pre("save", async function () {
+  try {
+    await this.populate("userId", "email").execPopulate();
+    console.log("User Email:", this.userId.email);
+  } catch (error) {
+    console.error("Error during population:", error);
+  }
+});
+
 const Mom = mongoose.model("Mom", MomSchema);
 
 module.exports = Mom;
