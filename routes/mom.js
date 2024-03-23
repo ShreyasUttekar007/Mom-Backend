@@ -169,4 +169,18 @@ router.put("/update-mom/:momId", async (req, res) => {
   }
 });
 
+router.delete("/delete-mom/:momId", async (req, res) => {
+  try {
+    const { momId } = req.params;
+    const deletedMom = await Mom.findByIdAndDelete(momId);
+    if (!deletedMom) {
+      return res.status(404).json({ error: "Mom record not found" });
+    }
+    res.status(200).json({ message: "Mom record deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 module.exports = router;
