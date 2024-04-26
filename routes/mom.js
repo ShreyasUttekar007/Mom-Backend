@@ -125,6 +125,18 @@ router.get("/get-mom-by-zone/:zone", async (req, res) => {
   }
 });
 
+router.get("/get-mom-count-by-zone/:zone", async (req, res) => {
+  try {
+    const { zone } = req.params;
+    const momCount = await Mom.countDocuments({ zone });
+
+    res.status(200).json({ zone, momCount });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 router.get("/get-mom-by-pc/:pc", async (req, res) => {
   try {
     const { pc } = req.params;
