@@ -453,6 +453,29 @@ router.get("/get-mom-count-by-zone/:zone", async (req, res) => {
   }
 });
 
+router.get("/get-mom-count-by-pc/:pc", async (req, res) => {
+  try {
+    const { pc } = req.params;
+    const momCount = await Mom.countDocuments({ pc });
+
+    res.status(200).json({ pc, momCount });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/get-mom-count-by-constituency/:constituency", async (req, res) => {
+  try {
+    const { constituency } = req.params;
+    const momCount = await Mom.countDocuments({ constituency });
+
+    res.status(200).json({ constituency, momCount });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 router.get("/get-mom-by-pc/:pc", async (req, res) => {
   try {
     const { pc } = req.params;
