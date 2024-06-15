@@ -12,6 +12,7 @@ const authRoutes = require("./routes/auth");
 const momRoutes = require("./routes/mom");
 const reportRoutes = require("./routes/report");
 const form17Routes = require("./routes/form17");
+const form20Routes = require("./routes/form20");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
@@ -78,6 +79,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/moms", momRoutes);
 app.use("/api/report", reportRoutes);
 app.use("/api/form17", form17Routes);
+app.use("/api/form20", form20Routes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "client/build")));
