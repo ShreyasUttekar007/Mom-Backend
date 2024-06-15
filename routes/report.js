@@ -198,7 +198,7 @@ router.get("/get-report/:userId", async (req, res) => {
       "84-Hadgaon",
       "85-Bhokar",
       "86-Nanded North",
-      "87-Nanded South",
+      "87-Nanded south",
       "88-Loha",
       "89-Naigaon",
       "90-Deglur(SC)",
