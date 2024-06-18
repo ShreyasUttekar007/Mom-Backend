@@ -28,7 +28,7 @@ const Form17Schema = new Schema(
       required: [true, "Please select a Constituency"],
       trim: true,
     },
-    document: {
+    formDocument: {
       type: String,
     },
   },

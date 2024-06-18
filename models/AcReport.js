@@ -31,6 +31,9 @@ const AcReportSchema = new Schema(
     document: {
       type: String,
     },
+    form20Document: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
