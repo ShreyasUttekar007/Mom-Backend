@@ -28,6 +28,24 @@ router.get("/get-report", async (req, res) => {
   }
 });
 
+router.get("/count-documents", async (req, res) => {
+  try {
+    const count = await Report.countDocuments({ document: { $exists: true, $ne: null } });
+    res.status(200).json({ count });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/count-form20-documents", async (req, res) => {
+  try {
+    const count = await Report.countDocuments({ form20Document: { $exists: true, $ne: null } });
+    res.status(200).json({ count });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get("/get-report-by-id/:momId", async (req, res) => {
   try {
     const { momId } = req.params;
@@ -466,7 +484,7 @@ router.get("/get-report-by-zone/:zone", async (req, res) => {
   try {
     const { zone } = req.params;
 
-    const moms = await Report.find({ zone });
+    const moms = await Report.find({ zone }).populate("userId");
 
     const momCount = await Report.countDocuments({ zone });
 
