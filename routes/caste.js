@@ -77,6 +77,7 @@ router.get("/get-report-count-by-constituency/:constituency", async (req, res) =
   }
 });
 
+
 router.get("/get-report/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -84,8 +85,9 @@ router.get("/get-report/:userId", async (req, res) => {
 
     // Check if user is admin
     if (userRoles.includes("admin")) {
-      const moms = await Report.find().populate("userId");
-      return res.status(200).json(moms);
+      const reports = await Report.find().populate("userId");
+      const processedReports = processReports(reports);
+      return res.status(200).json(processedReports);
     }
 
     // Check if the requested userId matches the authenticated user's id
@@ -93,7 +95,7 @@ router.get("/get-report/:userId", async (req, res) => {
       return res.status(403).json({ error: "Forbidden - Unauthorized user" });
     }
 
-    let moms;
+    let reports;
     const zoneRoles = [
       "Eastern Vidarbha",
       "Konkan",
@@ -108,7 +110,6 @@ router.get("/get-report/:userId", async (req, res) => {
     const userZoneRoles = (userRoles || []).filter((role) =>
       zoneRoles.includes(role)
     );
-    console.log("userZoneRoles::: ", userZoneRoles);
 
     // Define constituency roles
     const assemblyConstituencies = [
@@ -404,36 +405,74 @@ router.get("/get-report/:userId", async (req, res) => {
     const userConstituencyRoles = (userRoles || []).filter((role) =>
       assemblyConstituencies.includes(role)
     );
-    console.log("userConstituencyRoles::: ", userConstituencyRoles);
 
     if (userZoneRoles.length > 0) {
       if (userConstituencyRoles.length > 0) {
         // Filter by both zone and constituency roles
-        moms = await Report.find({
+        reports = await Report.find({
           zone: { $in: userZoneRoles },
           constituency: { $in: userConstituencyRoles },
         }).populate("userId");
       } else {
         // Filter by zone roles only
-        moms = await Report.find({ zone: { $in: userZoneRoles } }).populate(
-          "userId"
-        );
+        reports = await Report.find({ zone: { $in: userZoneRoles } }).populate("userId");
       }
     } else if (userConstituencyRoles.length > 0) {
       // Filter by constituency roles only
-      moms = await Report.find({
+      reports = await Report.find({
         constituency: { $in: userConstituencyRoles },
       }).populate("userId");
     } else {
       // Default to filtering by userId
-      moms = await Report.find({ userId }).populate("userId");
+      reports = await Report.find({ userId }).populate("userId");
     }
 
-    return res.status(200).json(moms);
+    // Processing reports to ensure each AC's percentages are sorted in ascending order
+    const processedReports = processReports(reports);
+    processedReports.forEach((report) => {
+      report.moms.sort((a, b) => parseFloat(a.percentage) - parseFloat(b.percentage));
+    });
+
+    return res.status(200).json(processedReports);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 });
+
+
+// Function to process the reports
+function processReports(reports) {
+  const constituencyMap = new Map();
+
+  reports.forEach(report => {
+    const { constituency, caste, percentage, category } = report;
+    if (!constituencyMap.has(constituency)) {
+      constituencyMap.set(constituency, {});
+    }
+    const casteMap = constituencyMap.get(constituency);
+    if (!casteMap[caste]) {
+      casteMap[caste] = { total: 0, count: 0, category };
+    }
+    casteMap[caste].total += parseFloat(percentage);
+    casteMap[caste].count += 1;
+  });
+
+  const processedReports = [];
+  constituencyMap.forEach((casteMap, constituency) => {
+    for (const [caste, data] of Object.entries(casteMap)) {
+      const averagePercentage = (data.total / data.count).toFixed(2);
+      processedReports.push({
+        constituency,
+        caste,
+        percentage: averagePercentage,
+        category: data.category
+      });
+    }
+  });
+
+  return processedReports;
+}
+
 
 
 router.get("/get-report-by-party/:partyName", async (req, res) => {

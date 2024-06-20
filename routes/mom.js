@@ -432,7 +432,7 @@ router.get("/get-mom-by-zone/:zone", async (req, res) => {
   try {
     const { zone } = req.params;
 
-    const moms = await Mom.find({ zone });
+    const moms = await Mom.find({ zone }).populate("userId");
 
     const momCount = await Mom.countDocuments({ zone });
 
