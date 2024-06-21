@@ -28,39 +28,25 @@ const MediaScanSchema = new Schema(
       required: [true, "Please select a Constituency"],
       trim: true,
     },
-    leaderName: {
-      type: String,
-      required: [true, "Please enter Leader's Name"],
-      trim: true,
-    },
-    dom: {
-      type: String,
-      required: [true, "Please enter Dom"],
-      trim: true,
-    },
-    designation: {
-      type: String,
-      required: [true, "Please enter Designation"],
-      trim: true,
-    },
-    partyName: {
-      type: String,
-      required: [true, "Please enter a Party Name"],
-      trim: true,
-    },
-    remarks: {
-      type: String,
-      required: [true, "Please select a Party Name"],
-      trim: true,
-    },
-    tags: {
-      type: [String],
-      trim: true,
-    },
-    photo: {
+    organization:{
       type: String,
     },
-    document: {
+    organizationName:{
+      type: String,
+    },
+    headline: {
+      type: String,
+    },
+    summary: {
+      type: String,
+    },
+    source: {
+      type: String,
+    },
+    link: {
+      type: String,
+    },
+    sentiment: {
       type: String,
     },
   },

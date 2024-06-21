@@ -15,6 +15,8 @@ const form17Routes = require("./routes/form17");
 const form20Routes = require("./routes/form20");
 const casteRoutes = require("./routes/caste");
 const gattRoutes = require("./routes/gatt");
+const mediaRoutes = require("./routes/mediaScan");
+const boothRoutes = require("./routes/boothList");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
@@ -84,6 +86,9 @@ app.use("/api/form17", form17Routes);
 app.use("/api/form20", form20Routes);
 app.use("/api/gatt", gattRoutes);
 app.use("/api/caste", casteRoutes);
+app.use("/api/mediascan", mediaRoutes);
+app.use("/api/booth", boothRoutes);
+
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "client/build")));
