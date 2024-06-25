@@ -72,9 +72,7 @@ router.get("/get-mom/:userId", async (req, res) => {
       "Western Vidarbha",
     ];
 
-    const userZoneRoles = (userRoles || []).filter((role) =>
-      zoneRoles.includes(role)
-    );
+    const userZoneRoles = userRoles.filter((role) => zoneRoles.includes(role));
     console.log("userZoneRoles::: ", userZoneRoles);
 
     // Define constituency roles
@@ -368,28 +366,102 @@ router.get("/get-mom/:userId", async (req, res) => {
       "287-Tasgaon-Kavathe",
       "288-Jat",
     ];
-    const userConstituencyRoles = (userRoles || []).filter((role) =>
+
+    const userConstituencyRoles = userRoles.filter((role) =>
       assemblyConstituencies.includes(role)
     );
     console.log("userConstituencyRoles::: ", userConstituencyRoles);
 
+    // Define district roles
+    const districtRoles = [
+      "Ahmednagar",
+      "Akola",
+      "Washim",
+      "Amravati",
+      "Chhatrapati Sambhaji Nagar",
+      "Pune",
+      "Beed",
+      "Bhandara",
+      "Gondiya",
+      "Thane",
+      "Buldhana",
+      "Chandrapur",
+      "Yavatmal",
+      "Dhule",
+      "Nashik",
+      "Gadchiroli",
+      "Kolhapur",
+      "Sangli",
+      "Nanded",
+      "Hingoli",
+      "Jalgaon",
+      "Jalna",
+      "Latur",
+      "Solapur",
+      "Satara",
+      "Raigad",
+      "Mumbai (Suburban)",
+      "Mumbai City",
+      "Nagpur",
+      "Nandurbar",
+      "Dharashiv",
+      "Palghar",
+      "Parbhani",
+      "Ratnagiri",
+      "Sindhudurg",
+      "Wardha",
+    ];
+
+    const userDistrictRoles = userRoles.filter((role) =>
+      districtRoles.includes(role)
+    );
+    console.log("userDistrictRoles::: ", userDistrictRoles);
+
     if (userZoneRoles.length > 0) {
       if (userConstituencyRoles.length > 0) {
-        // Filter by both zone and constituency roles
+        if (userDistrictRoles.length > 0) {
+          // Filter by zone, constituency, and district roles
+          moms = await Mom.find({
+            zone: { $in: userZoneRoles },
+            constituency: { $in: userConstituencyRoles },
+            district: { $in: userDistrictRoles },
+          }).populate("userId");
+        } else {
+          // Filter by zone and constituency roles only
+          moms = await Mom.find({
+            zone: { $in: userZoneRoles },
+            constituency: { $in: userConstituencyRoles },
+          }).populate("userId");
+        }
+      } else if (userDistrictRoles.length > 0) {
+        // Filter by zone and district roles only
         moms = await Mom.find({
           zone: { $in: userZoneRoles },
-          constituency: { $in: userConstituencyRoles },
+          district: { $in: userDistrictRoles },
         }).populate("userId");
       } else {
         // Filter by zone roles only
-        moms = await Mom.find({ zone: { $in: userZoneRoles } }).populate(
-          "userId"
-        );
+        moms = await Mom.find({
+          zone: { $in: userZoneRoles },
+        }).populate("userId");
       }
     } else if (userConstituencyRoles.length > 0) {
-      // Filter by constituency roles only
+      if (userDistrictRoles.length > 0) {
+        // Filter by constituency and district roles
+        moms = await Mom.find({
+          constituency: { $in: userConstituencyRoles },
+          district: { $in: userDistrictRoles },
+        }).populate("userId");
+      } else {
+        // Filter by constituency roles only
+        moms = await Mom.find({
+          constituency: { $in: userConstituencyRoles },
+        }).populate("userId");
+      }
+    } else if (userDistrictRoles.length > 0) {
+      // Filter by district roles only
       moms = await Mom.find({
-        constituency: { $in: userConstituencyRoles },
+        district: { $in: userDistrictRoles },
       }).populate("userId");
     } else {
       // Default to filtering by userId

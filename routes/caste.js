@@ -85,9 +85,8 @@ router.get("/get-report/:userId", async (req, res) => {
 
     // Check if user is admin
     if (userRoles.includes("admin")) {
-      const reports = await Report.find().populate("userId");
-      const processedReports = processReports(reports);
-      return res.status(200).json(processedReports);
+      const moms = await Report.find().populate("userId");
+      return res.status(200).json(moms);
     }
 
     // Check if the requested userId matches the authenticated user's id
@@ -95,7 +94,7 @@ router.get("/get-report/:userId", async (req, res) => {
       return res.status(403).json({ error: "Forbidden - Unauthorized user" });
     }
 
-    let reports;
+    let moms;
     const zoneRoles = [
       "Eastern Vidarbha",
       "Konkan",
@@ -107,9 +106,8 @@ router.get("/get-report/:userId", async (req, res) => {
       "Western Vidarbha",
     ];
 
-    const userZoneRoles = (userRoles || []).filter((role) =>
-      zoneRoles.includes(role)
-    );
+    const userZoneRoles = userRoles.filter((role) => zoneRoles.includes(role));
+    console.log("userZoneRoles::: ", userZoneRoles);
 
     // Define constituency roles
     const assemblyConstituencies = [
@@ -402,38 +400,109 @@ router.get("/get-report/:userId", async (req, res) => {
       "287-Tasgaon-Kavathe",
       "288-Jat",
     ];
-    const userConstituencyRoles = (userRoles || []).filter((role) =>
+
+    const userConstituencyRoles = userRoles.filter((role) =>
       assemblyConstituencies.includes(role)
     );
+    console.log("userConstituencyRoles::: ", userConstituencyRoles);
+
+    // Define district roles
+    const districtRoles = [
+      "Ahmednagar",
+      "Akola",
+      "Washim",
+      "Amravati",
+      "Chhatrapati Sambhaji Nagar",
+      "Pune",
+      "Beed",
+      "Bhandara",
+      "Gondiya",
+      "Thane",
+      "Buldhana",
+      "Chandrapur",
+      "Yavatmal",
+      "Dhule",
+      "Nashik",
+      "Gadchiroli",
+      "Kolhapur",
+      "Sangli",
+      "Nanded",
+      "Hingoli",
+      "Jalgaon",
+      "Jalna",
+      "Latur",
+      "Solapur",
+      "Satara",
+      "Raigad",
+      "Mumbai (Suburban)",
+      "Mumbai City",
+      "Nagpur",
+      "Nandurbar",
+      "Dharashiv",
+      "Palghar",
+      "Parbhani",
+      "Ratnagiri",
+      "Sindhudurg",
+      "Wardha",
+    ];
+
+    const userDistrictRoles = userRoles.filter((role) =>
+      districtRoles.includes(role)
+    );
+    console.log("userDistrictRoles::: ", userDistrictRoles);
 
     if (userZoneRoles.length > 0) {
       if (userConstituencyRoles.length > 0) {
-        // Filter by both zone and constituency roles
-        reports = await Report.find({
+        if (userDistrictRoles.length > 0) {
+          // Filter by zone, constituency, and district roles
+          moms = await Report.find({
+            zone: { $in: userZoneRoles },
+            constituency: { $in: userConstituencyRoles },
+            district: { $in: userDistrictRoles },
+          }).populate("userId");
+        } else {
+          // Filter by zone and constituency roles only
+          moms = await Report.find({
+            zone: { $in: userZoneRoles },
+            constituency: { $in: userConstituencyRoles },
+          }).populate("userId");
+        }
+      } else if (userDistrictRoles.length > 0) {
+        // Filter by zone and district roles only
+        moms = await Report.find({
           zone: { $in: userZoneRoles },
-          constituency: { $in: userConstituencyRoles },
+          district: { $in: userDistrictRoles },
         }).populate("userId");
       } else {
         // Filter by zone roles only
-        reports = await Report.find({ zone: { $in: userZoneRoles } }).populate("userId");
+        moms = await Report.find({
+          zone: { $in: userZoneRoles },
+        }).populate("userId");
       }
     } else if (userConstituencyRoles.length > 0) {
-      // Filter by constituency roles only
-      reports = await Report.find({
-        constituency: { $in: userConstituencyRoles },
+      if (userDistrictRoles.length > 0) {
+        // Filter by constituency and district roles
+        moms = await Report.find({
+          constituency: { $in: userConstituencyRoles },
+          district: { $in: userDistrictRoles },
+        }).populate("userId");
+      } else {
+        // Filter by constituency roles only
+        moms = await Report.find({
+          constituency: { $in: userConstituencyRoles },
+        }).populate("userId");
+      }
+    } else if (userDistrictRoles.length > 0) {
+      // Filter by district roles only
+      moms = await Report.find({
+        district: { $in: userDistrictRoles },
       }).populate("userId");
     } else {
       // Default to filtering by userId
-      reports = await Report.find({ userId }).populate("userId");
+      moms = await Report.find({ userId }).populate("userId");
     }
 
-    // Processing reports to ensure each AC's percentages are sorted in ascending order
-    const processedReports = processReports(reports);
-    processedReports.forEach((report) => {
-      report.moms.sort((a, b) => parseFloat(a.percentage) - parseFloat(b.percentage));
-    });
-
-    return res.status(200).json(processedReports);
+    return res.status(200).json(moms);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
