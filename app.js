@@ -17,6 +17,7 @@ const casteRoutes = require("./routes/caste");
 const gattRoutes = require("./routes/gatt");
 const mediaRoutes = require("./routes/mediaScan");
 const boothRoutes = require("./routes/boothList");
+const idiRoutes = require("./routes/idi");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
@@ -88,7 +89,7 @@ app.use("/api/gatt", gattRoutes);
 app.use("/api/caste", casteRoutes);
 app.use("/api/mediascan", mediaRoutes);
 app.use("/api/booth", boothRoutes);
-
+app.use("/api/idi", idiRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "client/build")));
