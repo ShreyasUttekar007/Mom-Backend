@@ -24,7 +24,7 @@ router.post("/signup", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { userName, email, password } = req.body;
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -48,6 +48,7 @@ router.post("/login", async (req, res, next) => {
         email: user.email,
         _id: user._id,
         roles: user.roles,
+        userName: user.userName,
       };
 
       req.session.token = token;
