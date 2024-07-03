@@ -66,17 +66,19 @@ router.get("/get-report-count-by-pc/:pc", async (req, res) => {
   }
 });
 
-router.get("/get-report-count-by-constituency/:constituency", async (req, res) => {
-  try {
-    const { constituency } = req.params;
-    const reportCount = await Report.countDocuments({ constituency });
+router.get(
+  "/get-report-count-by-constituency/:constituency",
+  async (req, res) => {
+    try {
+      const { constituency } = req.params;
+      const reportCount = await Report.countDocuments({ constituency });
 
-    res.status(200).json({ constituency, reportCount });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+      res.status(200).json({ constituency, reportCount });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   }
-});
-
+);
 
 router.get("/get-report/:userId", async (req, res) => {
   try {
@@ -85,7 +87,7 @@ router.get("/get-report/:userId", async (req, res) => {
 
     // Check if user is admin
     if (userRoles.includes("admin")) {
-      const moms = await Report.find().populate("userId");
+      const moms = await Report.find().populate("userId").sort({ constituency: 1 });
       return res.status(200).json(moms);
     }
 
@@ -459,25 +461,25 @@ router.get("/get-report/:userId", async (req, res) => {
             zone: { $in: userZoneRoles },
             constituency: { $in: userConstituencyRoles },
             district: { $in: userDistrictRoles },
-          }).populate("userId");
+          }).populate("userId").sort({ constituency: 1 });
         } else {
           // Filter by zone and constituency roles only
           moms = await Report.find({
             zone: { $in: userZoneRoles },
             constituency: { $in: userConstituencyRoles },
-          }).populate("userId");
+          }).populate("userId").sort({ constituency: 1 });
         }
       } else if (userDistrictRoles.length > 0) {
         // Filter by zone and district roles only
         moms = await Report.find({
           zone: { $in: userZoneRoles },
           district: { $in: userDistrictRoles },
-        }).populate("userId");
+        }).populate("userId").sort({ constituency: 1 });
       } else {
         // Filter by zone roles only
         moms = await Report.find({
           zone: { $in: userZoneRoles },
-        }).populate("userId");
+        }).populate("userId").sort({ constituency: 1 });
       }
     } else if (userConstituencyRoles.length > 0) {
       if (userDistrictRoles.length > 0) {
@@ -485,21 +487,21 @@ router.get("/get-report/:userId", async (req, res) => {
         moms = await Report.find({
           constituency: { $in: userConstituencyRoles },
           district: { $in: userDistrictRoles },
-        }).populate("userId");
+        }).populate("userId").sort({ constituency: 1 });
       } else {
         // Filter by constituency roles only
         moms = await Report.find({
           constituency: { $in: userConstituencyRoles },
-        }).populate("userId");
+        }).populate("userId").sort({ constituency: 1 });
       }
     } else if (userDistrictRoles.length > 0) {
       // Filter by district roles only
       moms = await Report.find({
         district: { $in: userDistrictRoles },
-      }).populate("userId");
+      }).populate("userId").sort({ constituency: 1 });
     } else {
       // Default to filtering by userId
-      moms = await Report.find({ userId }).populate("userId");
+      moms = await Report.find({ userId }).populate("userId").sort({ constituency: 1 });
     }
 
     return res.status(200).json(moms);
@@ -513,7 +515,7 @@ router.get("/get-report/:userId", async (req, res) => {
 function processReports(reports) {
   const constituencyMap = new Map();
 
-  reports.forEach(report => {
+  reports.forEach((report) => {
     const { constituency, caste, percentage, category } = report;
     if (!constituencyMap.has(constituency)) {
       constituencyMap.set(constituency, {});
@@ -534,15 +536,13 @@ function processReports(reports) {
         constituency,
         caste,
         percentage: averagePercentage,
-        category: data.category
+        category: data.category,
       });
     }
   });
 
   return processedReports;
 }
-
-
 
 router.get("/get-report-by-party/:partyName", async (req, res) => {
   try {
@@ -640,6 +640,5 @@ router.delete("/delete-report/:momId", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 module.exports = router;
