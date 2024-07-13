@@ -270,7 +270,7 @@ router.get("/get-mom/:userId", async (req, res) => {
       "191-Pen",
       "192-Alibag",
       "193-Shrivardhan",
-      "194-Mahad",
+      "194-mahad",
       "195-Junnar",
       "196-Ambegaon",
       "197-Khed Alandi",
