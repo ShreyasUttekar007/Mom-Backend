@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const config = require("../config");
 const User = require("../models/User");
+const Booth = require('../models/BoothList');
 
 const router = express.Router();
 router.post("/signup", async (req, res, next) => {
@@ -134,5 +135,86 @@ router.delete("/users/:id", async (req, res, next) => {
     next(error);
   }
 });
+
+// Function to add a user to the hierarchy
+// function addUserToHierarchy(hierarchy, user, parent, roleKey) {
+//   if (!parent[roleKey]) {
+//     parent[roleKey] = [];
+//   }
+
+//   parent[roleKey].push(user);
+// }
+
+// // Function to find the parent node in the hierarchy
+// function findParentNode(hierarchy, booth, level) {
+//   let parent = hierarchy;
+
+//   if (level >= 1) {
+//     if (!parent[booth.zone]) {
+//       parent[booth.zone] = {};
+//     }
+//     parent = parent[booth.zone];
+//   }
+
+//   if (level >= 2) {
+//     if (!parent[booth.district]) {
+//       parent[booth.district] = {};
+//     }
+//     parent = parent[booth.district];
+//   }
+
+//   if (level >= 3) {
+//     if (!parent[booth.pc]) {
+//       parent[booth.pc] = {};
+//     }
+//     parent = parent[booth.pc];
+//   }
+
+//   if (level >= 4) {
+//     if (!parent[booth.constituency]) {
+//       parent[booth.constituency] = [];
+//     }
+//     parent = parent[booth.constituency];
+//   }
+
+//   return parent;
+// }
+
+// // GET /api/hierarchy - Get the hierarchical tree of users
+// router.get('/hierarchy', async (req, res) => {
+//   try {
+//     const users = await User.find().exec();
+//     const booths = await Booth.find().populate('userId').exec();
+
+//     const hierarchy = {};
+
+//     users.forEach(user => {
+//       user.roles.forEach(role => {
+//         const booth = booths.find(booth => booth.userId && booth.userId._id.equals(user._id));
+
+//         if (booth) {
+//           if (role.includes('Zone')) {
+//             addUserToHierarchy(hierarchy, user, hierarchy, role);
+//           } else if (role.includes('District')) {
+//             const parent = findParentNode(hierarchy, booth, 1);
+//             addUserToHierarchy(hierarchy, user, parent, role);
+//           } else if (role.includes('Constituency')) {
+//             const parent = findParentNode(hierarchy, booth, 2);
+//             addUserToHierarchy(hierarchy, user, parent, role);
+//           } else {
+//             const parent = findParentNode(hierarchy, booth, 3);
+//             addUserToHierarchy(hierarchy, user, parent, role);
+//           }
+//         }
+//       });
+//     });
+
+//     res.json(hierarchy);
+//   } catch (error) {
+//     console.error("Error fetching hierarchy:", error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
 
 module.exports = router;

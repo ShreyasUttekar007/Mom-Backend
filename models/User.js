@@ -286,7 +286,7 @@ const assemblyConstituencies = [
   "280-Shirol",
   "281-Miraj(SC)",
   "282-Sangli",
-  "283-Islampur",
+  "283-islampur",
   "284-Shirala",
   "285-Palus-Kadegaon",
   "286-Khanpur",
