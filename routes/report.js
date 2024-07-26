@@ -273,7 +273,7 @@ router.get("/get-report/:userId", async (req, res) => {
       "143-Dombivali",
       "144-Kalyan Rural",
       "145-Meera Bhayandar",
-      "146-Ovala majiwada",
+      "146-ovala majiwada",
       "147-Kopri-Pachpakhadi",
       "148-Thane",
       "149-Mumbra-Kalwa",
