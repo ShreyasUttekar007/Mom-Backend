@@ -294,6 +294,45 @@ const assemblyConstituencies = [
   "288-Jat",
 ];
 
+const districtRoles = [
+  "Ahmednagar",
+  "Akola",
+  "Washim",
+  "Amravati",
+  "Chhatrapati Sambhaji Nagar",
+  "Pune",
+  "Beed",
+  "Bhandara",
+  "Gondiya",
+  "Thane",
+  "Buldhana",
+  "Chandrapur",
+  "Yavatmal",
+  "Dhule",
+  "Nashik",
+  "Gadchiroli",
+  "Kolhapur",
+  "Sangli",
+  "Nanded",
+  "Hingoli",
+  "Jalgaon",
+  "Jalna",
+  "Latur",
+  "Solapur",
+  "Satara",
+  "Raigad",
+  "Mumbai (Suburban)",
+  "Mumbai City",
+  "Nagpur",
+  "Nandurbar",
+  "Dharashiv",
+  "Palghar",
+  "Parbhani",
+  "Ratnagiri",
+  "Sindhudurg",
+  "Wardha",
+];
+
 const UserSchema = new Schema(
   {
     userName: {
@@ -329,6 +368,7 @@ const UserSchema = new Schema(
             "Western Maharashtra",
             "Western Vidarbha",
             ...assemblyConstituencies,
+            ...districtRoles,
           ],
         },
       ],
