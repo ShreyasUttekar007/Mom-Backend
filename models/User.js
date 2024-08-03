@@ -143,7 +143,7 @@ const assemblyConstituencies = [
   "137-Bhiwandi East",
   "138-Kalyan West",
   "139-Murbad",
-  "140-Ambarnath(SC)",
+  "140-ambarnath",
   "141-Ulhasnagar",
   "142-Kalyan East",
   "143-Dombivali",
