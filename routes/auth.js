@@ -123,6 +123,27 @@ router.put("/update-password", async (req, res, next) => {
   }
 });
 
+
+router.put("/update-user", async (req, res, next) => {
+  try {
+    const { userId, email, userName, roles } = req.body;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.email = email || user.email;
+    user.userName = userName || user.userName;
+    user.roles = roles || user.roles;
+
+    await user.save();
+    res.status(200).json({ message: "User updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.delete("/users/:id", async (req, res, next) => {
   try {
     const userId = req.params.id;
@@ -136,85 +157,6 @@ router.delete("/users/:id", async (req, res, next) => {
   }
 });
 
-// Function to add a user to the hierarchy
-// function addUserToHierarchy(hierarchy, user, parent, roleKey) {
-//   if (!parent[roleKey]) {
-//     parent[roleKey] = [];
-//   }
-
-//   parent[roleKey].push(user);
-// }
-
-// // Function to find the parent node in the hierarchy
-// function findParentNode(hierarchy, booth, level) {
-//   let parent = hierarchy;
-
-//   if (level >= 1) {
-//     if (!parent[booth.zone]) {
-//       parent[booth.zone] = {};
-//     }
-//     parent = parent[booth.zone];
-//   }
-
-//   if (level >= 2) {
-//     if (!parent[booth.district]) {
-//       parent[booth.district] = {};
-//     }
-//     parent = parent[booth.district];
-//   }
-
-//   if (level >= 3) {
-//     if (!parent[booth.pc]) {
-//       parent[booth.pc] = {};
-//     }
-//     parent = parent[booth.pc];
-//   }
-
-//   if (level >= 4) {
-//     if (!parent[booth.constituency]) {
-//       parent[booth.constituency] = [];
-//     }
-//     parent = parent[booth.constituency];
-//   }
-
-//   return parent;
-// }
-
-// // GET /api/hierarchy - Get the hierarchical tree of users
-// router.get('/hierarchy', async (req, res) => {
-//   try {
-//     const users = await User.find().exec();
-//     const booths = await Booth.find().populate('userId').exec();
-
-//     const hierarchy = {};
-
-//     users.forEach(user => {
-//       user.roles.forEach(role => {
-//         const booth = booths.find(booth => booth.userId && booth.userId._id.equals(user._id));
-
-//         if (booth) {
-//           if (role.includes('Zone')) {
-//             addUserToHierarchy(hierarchy, user, hierarchy, role);
-//           } else if (role.includes('District')) {
-//             const parent = findParentNode(hierarchy, booth, 1);
-//             addUserToHierarchy(hierarchy, user, parent, role);
-//           } else if (role.includes('Constituency')) {
-//             const parent = findParentNode(hierarchy, booth, 2);
-//             addUserToHierarchy(hierarchy, user, parent, role);
-//           } else {
-//             const parent = findParentNode(hierarchy, booth, 3);
-//             addUserToHierarchy(hierarchy, user, parent, role);
-//           }
-//         }
-//       });
-//     });
-
-//     res.json(hierarchy);
-//   } catch (error) {
-//     console.error("Error fetching hierarchy:", error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// });
 
 
 module.exports = router;
