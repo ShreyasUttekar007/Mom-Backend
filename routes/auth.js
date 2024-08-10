@@ -1,10 +1,14 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const config = require("../config");
+const mongoose = require('mongoose'); // Import mongoose
 const User = require("../models/User");
 const Booth = require('../models/BoothList');
 
 const router = express.Router();
+
+const { ObjectId } = mongoose.Types;
+
 router.post("/signup", async (req, res, next) => {
   try {
     const { userName, email, password, roles } = req.body;
@@ -80,6 +84,12 @@ router.get("/users", async (req, res, next) => {
 router.get("/users/:id", async (req, res, next) => {
   try {
     const userId = req.params.id;
+
+    // Validate the userId
+    if (!ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
     const user = await User.findById(userId, { password: 0 });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -123,10 +133,10 @@ router.put("/update-password", async (req, res, next) => {
   }
 });
 
-
-router.put("/update-user", async (req, res, next) => {
+router.put("/update-user/:userId", async (req, res, next) => {
   try {
-    const { userId, email, userName, roles } = req.body;
+    const { userId } = req.params;
+    const { email, userName, roles } = req.body;
     const user = await User.findById(userId);
 
     if (!user) {
@@ -144,6 +154,7 @@ router.put("/update-user", async (req, res, next) => {
   }
 });
 
+
 router.delete("/users/:id", async (req, res, next) => {
   try {
     const userId = req.params.id;
@@ -156,7 +167,5 @@ router.delete("/users/:id", async (req, res, next) => {
     next(error);
   }
 });
-
-
 
 module.exports = router;
