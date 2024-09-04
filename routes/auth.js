@@ -54,6 +54,7 @@ router.post("/login", async (req, res, next) => {
         _id: user._id,
         roles: user.roles,
         userName: user.userName,
+        empId: user.empId,
       };
 
       req.session.token = token;

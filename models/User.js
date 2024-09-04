@@ -351,6 +351,9 @@ const UserSchema = new Schema(
       trim: true,
       minlength: 6,
     },
+    empId: {
+      type: String,
+    },
     roles: {
       type: [
         {

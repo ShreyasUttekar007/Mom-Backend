@@ -19,6 +19,7 @@ const mediaRoutes = require("./routes/mediaScan");
 const boothRoutes = require("./routes/boothList");
 const idiRoutes = require("./routes/idi");
 const candidateRoutes = require("./routes/candidateList");
+const empRoutes = require("./routes/empMetrics");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
@@ -92,6 +93,7 @@ app.use("/api/mediascan", mediaRoutes);
 app.use("/api/booth", boothRoutes);
 app.use("/api/idi", idiRoutes);
 app.use("/api/candidate", candidateRoutes);
+app.use("/api/empmetrics", empRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "client/build")));
